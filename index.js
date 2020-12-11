@@ -95,6 +95,8 @@ client.connect(err => {
         const last = req.body.last;
         const gender = req.body.gender;
         const dob = req.body.dob;
+        const roll = req.body.roll;
+        const blood = req.body.blood;
         const religion = req.body.religion;
         const email = req.body.email;
         const department = req.body.department;
@@ -113,13 +115,19 @@ client.connect(err => {
         };
 
 
-        student.insertOne({ first, last, gender, dob, religion, email, department, section, admissionId, phone, description, image })
+        student.insertOne({ first, last, gender, dob, roll, blood, religion, email, department, section, admissionId, phone, description, image })
             .then(result => {
                 res.send(result.insertedCount > 0)
             })
 
     })
 
+    app.get('/getRegisterStudent', (req, res) => {
+        student.find({})
+            .toArray((err, document) => {
+                res.send(document)
+            })
+    })
 
     app.post('/teacherRegister', (req, res) => {
         const file = req.files.file;
