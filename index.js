@@ -151,7 +151,5 @@ client.connect(err => {
 
 });
 
-
-app.listen(4000, () => {
-    console.log("Server Running!")
-})
+const port = 4000;
+app.listen(process.env.PORT || port)
