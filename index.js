@@ -107,6 +107,7 @@ client.connect(err => {
         const department = req.body.department;
         const section = req.body.section;
         const admissionId = req.body.admissionId;
+        const admissionDate = req.body.admissionDate;
         const description = req.body.description;
 
         const newImg = file.data;
@@ -119,7 +120,7 @@ client.connect(err => {
         };
 
 
-        student.insertOne({ first, last, gender, dob, fName, mName, fOccuption, address, roll, blood, religion, email, department, section, admissionId, phone, description, image })
+        student.insertOne({ first, last, gender, dob, fName, mName, fOccuption, address, roll, blood, religion, email, department, section, admissionId, admissionDate, phone, description, image })
             .then(result => {
                 res.send(result.insertedCount > 0)
             })
