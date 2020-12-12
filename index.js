@@ -139,13 +139,13 @@ client.connect(err => {
         const first = req.body.first;
         const last = req.body.last;
         const gender = req.body.gender;
-        const dob = req.body.dob;
+        const joiningDate = req.body.joiningDate;
         const idNumber = req.body.idnumber;
         const religion = req.body.religion;
         const email = req.body.email;
         const department = req.body.department;
         const qualification = req.body.qualification;
-        const admissionId = req.body.admissionId;
+        const address = req.body.address;
         const phone = req.body.phone;
         const description = req.body.description;
 
@@ -158,7 +158,14 @@ client.connect(err => {
             img: Buffer.from(encImg, 'base64')
         }
 
-        teachers.insertOne({ first, last, gender, dob, idNumber, religion, email, department, qualification, admissionId, phone, description, images })
+        teachers.insertOne({ first, last, gender, joiningDate, idNumber, religion, email, department, qualification, address, phone, description, images })
+    })
+
+    app.get('/registerTeacher', (req, res) =>{
+        teachers.find({})
+        .toArray((err, documents) =>{
+            res.send(documents)
+        })
     })
     console.log("Database Connected")
 
