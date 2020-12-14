@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { ObjectId } = require('mongodb');
 const fileUpload = require('express-fileupload');
+var cron = require('node-cron');
 
 require('dotenv').config();
 
@@ -30,7 +31,7 @@ client.connect(err => {
         console.log(rollNumber)
         // setInterval(() => { console.log(rollNumber ? 'yes' : 'false') }, 5000)
 
-        if (rollNumber.length === 6 && today.getHours() <= 12) {
+        if (rollNumber.length === 6 && today.getHours() <= 17) {
             studentIdentify.find({ roll: rollNumber })
                 .toArray((err, document) => {
                     studentIdentify.updateOne(
@@ -48,9 +49,39 @@ client.connect(err => {
             res.send("Sorry! you entered a wrong Roll number. Please try again later...")
         }
     })
-    app.post('/absentUser', (req, res) => {
-        console.log(req.body.today)
-    })
+    // cron.schedule('* * * * *', () => {
+    //     console.log('Hello Arif')
+    //     studentIdentify.find({})
+    //     .toArray((err, documents) => {
+    //         for (let index = 0; index < documents.length; index++) {
+    //             const element = documents[index].present;
+    //             const da = documents[index]._id
+    //             console.log(da)
+    //             for (let i = 0; i < element.length; i++) {
+    //                 const el = element[i].date;
+                    
+    //                 if (el === '12/13/2020') {
+    //                     if (el) {
+    //                         console.log(el)
+    //                         studentIdentify.updateOne(
+    //                             { date: el },
+    //                             {
+    //                                 $addToSet: { 'date': 'A' }
+    //                             }
+    //                         )
+    //                     }
+    
+    //                 }
+    //                 else {
+    //                     // console.log(el)
+    //                 }
+    
+    //             }
+    //             // console.log(element)
+    //         }
+    //     })
+    //   });
+    
     app.get('/getUser', (req, res) => {
         studentIdentify.find({})
             .toArray((err, document) => {
@@ -178,6 +209,7 @@ client.connect(err => {
                 res.send(documents)
             })
     })
+    
     console.log("Database Connected")
 
 });
