@@ -3,12 +3,16 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { ObjectId } = require('mongodb');
 const fileUpload = require('express-fileupload');
+const fs = require('fs');
+const shell = require('shelljs')
 var cron = require('node-cron');
-
+const MongoClient = require('mongodb').MongoClient;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xsirj.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const app = express();
 require('dotenv').config();
 
 
-const app = express();
 app.use(bodyParser.json())
 app.use(cors())
 app.use(fileUpload());
@@ -17,9 +21,7 @@ app.get('/', (req, res) => {
 })
 
 
-const MongoClient = require('mongodb').MongoClient;
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xsirj.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
 client.connect(err => {
     const adminCollection = client.db("identify").collection("adminPost");
     const studentIdentify = client.db("identify").collection("studentIdentify");
@@ -29,19 +31,22 @@ client.connect(err => {
     app.post('/user', (req, res) => {
         const rollNumber = req.body.roll;
         console.log(rollNumber)
-        // setInterval(() => { console.log(rollNumber ? 'yes' : 'false') }, 5000)
-
-        if (rollNumber.length === 6 && today.getHours() <= 17) {
+        if (rollNumber.length === 6 && today.getHours() <= 21) {
             studentIdentify.find({ roll: rollNumber })
                 .toArray((err, document) => {
-                    studentIdentify.updateOne(
-                        { _id: ObjectId(document[0]._id) },
-                        {
-                            $addToSet: {
-                                present: { date: today.toLocaleString(), present: 'P' }
-                            }
+                    for (let index = 0; index < document.length; index++) {
+                        const element = document[index].data;
+                        for (let i = 0; i < element.length; i++) {
+                            const elements = element[i];
+                            studentIdentify.updateOne(
+                                { _id: ObjectId(document[index]._id), 'data.day': 1 },
+                                {
+                                    $set: { 'data.$.present': 'P' }
+                                }
+                            )
                         }
-                    )
+                    }
+
                     res.send(document)
                 })
         }
@@ -52,36 +57,65 @@ client.connect(err => {
     // cron.schedule('* * * * *', () => {
     //     console.log('Hello Arif')
     //     studentIdentify.find({})
-    //     .toArray((err, documents) => {
-    //         for (let index = 0; index < documents.length; index++) {
-    //             const element = documents[index].present;
-    //             const da = documents[index]._id
-    //             console.log(da)
-    //             for (let i = 0; i < element.length; i++) {
-    //                 const el = element[i].date;
-                    
-    //                 if (el === '12/13/2020') {
-    //                     if (el) {
-    //                         console.log(el)
-    //                         studentIdentify.updateOne(
-    //                             { date: el },
-    //                             {
-    //                                 $addToSet: { 'date': 'A' }
-    //                             }
-    //                         )
+    //         .toArray((err, documents) => {
+    //             for (let index = 0; index < documents.length; index++) {
+    //                 const element = documents[index].attendence;
+    //                 const da = documents[index]._id
+    //                 // console.log(da)
+    //                 for (let i = 0; i < element.length; i++) {
+    //                     const el = element[i].date;
+    //                     const pr = element[i].present;
+
+    //                     if (el === today.toLocaleDateString()) {
+    //                         console.log(true)
+    //                         if (el) {
+    //                             console.log(el, 'date')
+    //                             console.log(da, 'id')
+    //                             studentIdentify.updateOne(
+    //                                 { _id: ObjectId(da) },
+    //                                 {
+    //                                     $addToSet: {
+    //                                         attendence: { date: today.toLocaleDateString(), present: 'A' }
+    //                                     }
+    //                                 }
+    //                             )
+    //                         }
+
     //                     }
-    
+    //                     else {
+    //                         // console.log(el)
+    //                     }
+
     //                 }
-    //                 else {
-    //                     // console.log(el)
-    //                 }
-    
     //             }
-    //             // console.log(element)
-    //         }
-    //     })
-    //   });
-    
+    //         })
+    // });
+
+    // cron.schedule('31 20 * * *', () => {
+    //     console.log('---------------------');
+    //     console.log('Running Corn Job')
+    //     // if(shell.exec('sqlite3 database.sqlite .dump > data_dump.sql').code !==0){
+    //     //     shell.exit(1)
+    //     // }
+    //     // else{
+    //     //     shell.echo('Database backup Completed')
+    //     // }
+    // });
+    cron.schedule('33 20 * * *', () => {
+        studentIdentify.find({})
+            .toArray((err, documents) => {
+                for (let index = 0; index < documents.length; index++) {
+                    studentIdentify.updateOne(
+                        { _id: ObjectId(documents[index]._id) },
+                        {
+                            $push: { data:{
+                                $each: [{ day: 1, date: today.toLocaleDateString(), present: 'A' }]
+                            }}
+                        }
+                    )
+                }
+            })
+    });
     app.get('/getUser', (req, res) => {
         studentIdentify.find({})
             .toArray((err, document) => {
@@ -209,7 +243,7 @@ client.connect(err => {
                 res.send(documents)
             })
     })
-    
+
     console.log("Database Connected")
 
 });
