@@ -24,29 +24,39 @@ client.connect(err => {
     const studentIdentify = client.db("identify").collection("studentIdentify");
     const student = client.db("identify").collection("student");
     const teachers = client.db("identify").collection("teachers");
+    const today = new Date()
     app.post('/user', (req, res) => {
         const rollNumber = req.body.roll;
         console.log(rollNumber)
         // setInterval(() => { console.log(rollNumber ? 'yes' : 'false') }, 5000)
 
-        if (rollNumber.length === 6) {
+        if (rollNumber.length === 6 && today.getHours() <= 12) {
             studentIdentify.find({ roll: rollNumber })
                 .toArray((err, document) => {
-                    if (rollNumber) {
-                        studentIdentify.updateOne(
-                            { _id: ObjectID(document[0]._id) },
-                            {
-                                $addToSet: {
-                                    present: { date: today.toLocaleString(), present: 'P' }
-                                }
+                    studentIdentify.updateOne(
+                        { _id: ObjectId(document[0]._id) },
+                        {
+                            $addToSet: {
+                                present: { date: today.toLocaleString(), present: 'P' }
                             }
-                        )
-                    }
+                        }
+                    )
                     res.send(document)
                 })
-        } else {
+        }
+        else {
             res.send("Sorry! you entered a wrong Roll number. Please try again later...")
         }
+    })
+    app.post('/absentUser', (req, res) => {
+        console.log(req.body.today)
+    })
+    app.get('/getUser', (req, res) => {
+        studentIdentify.find({})
+            .toArray((err, document) => {
+                res.send(document)
+            })
+
     })
 
     app.post('/adminPost', (req, res) => {
