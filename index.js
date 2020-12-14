@@ -101,7 +101,7 @@ client.connect(err => {
     //     //     shell.echo('Database backup Completed')
     //     // }
     // });
-    cron.schedule('33 20 * * *', () => {
+    cron.schedule('10 1 * * *', () => {
         studentIdentify.find({})
             .toArray((err, documents) => {
                 for (let index = 0; index < documents.length; index++) {
