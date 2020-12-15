@@ -24,7 +24,9 @@ client.connect(err => {
     const student = client.db("identify").collection("student");
     const teachers = client.db("identify").collection("teachers");
     const today = new Date()
-
+    if(err){
+        return res.send(err)
+    }
 
     app.post('/hello', (req, res) => {
         console.log(req.body)
