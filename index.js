@@ -33,7 +33,7 @@ client.connect(err => {
     app.post('/hello', (req, res) => {
         console.log(req.body)
     })
-    app.post('/roll', (req, res) => {
+    app.get('/roll', (req, res) => {
         const rollNumber = req.body.roll;
         console.log(rollNumber)
     })
