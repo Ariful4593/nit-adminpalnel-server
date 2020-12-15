@@ -52,18 +52,21 @@ client.connect(err => {
                             const elements = element[i].date;
                             if (elements === today.toLocaleDateString()) {
                                 console.log(elements)
-                                studentIdentify.updateOne(
-                                    { _id: ObjectId(document[index]._id), 'data.date': today.toLocaleDateString() },
-                                    {
-                                        $set: { 'data.$.present': 'P' }
-                                    }
+                                res.send(
+                                    studentIdentify.updateOne(
+                                        { _id: ObjectId(document[index]._id), 'data.date': today.toLocaleDateString() },
+                                        {
+                                            $set: { 'data.$.present': 'P' }
+                                        }
+                                    )
                                 )
+                                
                             }
 
                         }
                     }
 
-                    res.send(document)
+                    
                 })
         }
         else {
