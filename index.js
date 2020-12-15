@@ -36,7 +36,7 @@ client.connect(err => {
     app.post('/roll', (req, res) => {
         const rollNumber = req.body.roll;
         console.log(rollNumber)
-        res.send({data: req.body})
+        res.send(rollNumber)
         
     })
     app.post('/user', (req, res) => {
