@@ -35,7 +35,7 @@ client.connect(err => {
     })
     app.post('/roll', (req, res) => {
         // const rollNumber = req.body.roll;
-        res.send('Hello Word')
+        res.send({data: req.body})
         
     })
     app.post('/user', (req, res) => {
