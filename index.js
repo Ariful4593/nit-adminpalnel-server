@@ -19,14 +19,16 @@ const MongoClient = require('mongodb').MongoClient;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xsirj.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
+    console.log(err)
+    if(err){
+        return res.send(err)
+    }
     const adminCollection = client.db("identify").collection("adminPost");
     const studentIdentify = client.db("identify").collection("studentIdentify");
     const student = client.db("identify").collection("student");
     const teachers = client.db("identify").collection("teachers");
     const today = new Date()
-    if(err){
-        return res.send(err)
-    }
+    
 
     app.post('/hello', (req, res) => {
         console.log(req.body)
