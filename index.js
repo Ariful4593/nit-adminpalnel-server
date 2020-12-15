@@ -12,9 +12,7 @@ const app = express();
 app.use(bodyParser.json())
 app.use(cors())
 app.use(fileUpload());
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html')
-})
+
 
 
 const MongoClient = require('mongodb').MongoClient;
@@ -26,8 +24,14 @@ client.connect(err => {
     const student = client.db("identify").collection("student");
     const teachers = client.db("identify").collection("teachers");
     const today = new Date()
+
+
     app.post('/hello', (req, res) => {
         console.log(req.body)
+    })
+    app.post('/roll', (req, res) => {
+        const rollNumber = req.body.roll;
+        console.log(rollNumber)
     })
     app.post('/user', (req, res) => {
         console.log('Hello WORLD')
@@ -115,10 +119,7 @@ client.connect(err => {
                 }
             })
     });
-    app.post('/roll', (req, res) => {
-        const rollNumber = req.body.roll;
-        console.log(rollNumber)
-    })
+    
     app.get('/getUser', (req, res) => {
         studentIdentify.find({})
             .toArray((err, document) => {
@@ -250,6 +251,8 @@ client.connect(err => {
     console.log("Database Connected")
 
 });
-
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html')
+})
 const port = 4000;
 app.listen(process.env.PORT || port)
