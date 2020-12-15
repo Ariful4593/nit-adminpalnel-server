@@ -43,7 +43,7 @@ client.connect(err => {
         console.log('Hello WORLD')
         const rollNumber = req.body.roll;
         console.log(rollNumber)
-        if (rollNumber.length === 6 && today.getHours() <= 21) {
+        if (rollNumber.length === 6 && today.getHours() <= 23) {
             studentIdentify.find({ roll: rollNumber })
                 .toArray((err, document) => {
                     for (let index = 0; index < document.length; index++) {
