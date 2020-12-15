@@ -33,10 +33,10 @@ client.connect(err => {
     app.post('/hello', (req, res) => {
         console.log(req.body)
     })
-    app.get('/roll', (req, res) => {
-        const rollNumber = req.body.roll;
-        console.log(rollNumber)
-        res.send('Hello World')
+    app.post('/roll', (req, res) => {
+        // const rollNumber = req.body.roll;
+        res.send('Hello Word')
+        
     })
     app.post('/user', (req, res) => {
         console.log('Hello WORLD')
