@@ -26,7 +26,11 @@ client.connect(err => {
     const student = client.db("identify").collection("student");
     const teachers = client.db("identify").collection("teachers");
     const today = new Date()
+    app.post('/hello', (req, res) => {
+        console.log(req.body)
+    })
     app.post('/user', (req, res) => {
+        console.log('Hello WORLD')
         const rollNumber = req.body.roll;
         console.log(rollNumber)
         if (rollNumber.length === 6 && today.getHours() <= 21) {
@@ -36,22 +40,16 @@ client.connect(err => {
                         const element = document[index].data;
                         for (let i = 0; i < element.length; i++) {
                             const elements = element[i].date;
-                            if(elements === today.toLocaleDateString()){
+                            if (elements === today.toLocaleDateString()) {
                                 console.log(elements)
                                 studentIdentify.updateOne(
-                                { _id: ObjectId(document[index]._id), 'data.date': today.toLocaleDateString() },
-                                {
-                                    $set: { 'data.$.present': 'P' }
-                                }
-                            )
+                                    { _id: ObjectId(document[index]._id), 'data.date': today.toLocaleDateString() },
+                                    {
+                                        $set: { 'data.$.present': 'P' }
+                                    }
+                                )
                             }
-                            // console.log(elements)
-                            // studentIdentify.updateOne(
-                            //     { _id: ObjectId(document[index]._id), 'data.day': 1 },
-                            //     {
-                            //         $set: { 'data.$.present': 'Arif' }
-                            //     }
-                            // )
+
                         }
                     }
 
@@ -99,16 +97,6 @@ client.connect(err => {
     //         })
     // });
 
-    // cron.schedule('31 20 * * *', () => {
-    //     console.log('---------------------');
-    //     console.log('Running Corn Job')
-    //     // if(shell.exec('sqlite3 database.sqlite .dump > data_dump.sql').code !==0){
-    //     //     shell.exit(1)
-    //     // }
-    //     // else{
-    //     //     shell.echo('Database backup Completed')
-    //     // }
-    // });
     cron.schedule('34 8 * * *', () => {
         studentIdentify.find({})
             .toArray((err, documents) => {
@@ -117,14 +105,20 @@ client.connect(err => {
                     studentIdentify.updateOne(
                         { _id: ObjectId(documents[index]._id) },
                         {
-                            $push: { data:{
-                                $each: [{ day: 1, date: today.toLocaleDateString(), present: 'A' }]
-                            }}
+                            $push: {
+                                data: {
+                                    $each: [{ day: 1, date: today.toLocaleDateString(), present: 'A' }]
+                                }
+                            }
                         }
                     )
                 }
             })
     });
+    app.post('/roll', (req, res) => {
+        const rollNumber = req.body.roll;
+        console.log(rollNumber)
+    })
     app.get('/getUser', (req, res) => {
         studentIdentify.find({})
             .toArray((err, document) => {

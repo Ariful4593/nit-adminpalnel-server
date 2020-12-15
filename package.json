@@ -4,7 +4,8 @@
   "description": "This is Skill competition 2021 Project",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index",
+    "start": "node index.js",
+    "start:dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ariful Islam",
@@ -17,8 +18,9 @@
     "express-fileupload": "^1.2.0",
     "fs": "0.0.1-security",
     "mongodb": "^3.6.3",
-    "node-cron": "^2.0.3",
-    "nodemon": "^2.0.6",
-    "shelljs": "^0.8.4"
+    "node-cron": "^2.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }
