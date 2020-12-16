@@ -27,6 +27,7 @@ client.connect(err => {
     const today = new Date()
     app.post('/hell', (req, res) => {
         const test = req.body;
+        console.log(req.body)
         studentIdentify.insertOne(test)
         .then(result =>{
             res.send(result.insertedCount > 0)
