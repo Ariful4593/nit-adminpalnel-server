@@ -25,11 +25,14 @@ client.connect(err => {
     const student = client.db("identify").collection("student");
     const teachers = client.db("identify").collection("teachers");
     const today = new Date()
-
-    app.get('/user', (req, res) => {
-        console.log('Hello WORLD')
+    app.get('/hell/:id', (req, res) => {
+        console.log(req.params.id)
+    })
+    app.post('/user', (req, res) => {
+        console.log(req.body)
         const rollNumber = req.body.roll;
         console.log(rollNumber)
+        res.send(rollNumber)
         if (rollNumber.length === 6 && today.getHours() <= 23) {
             studentIdentify.find({ roll: rollNumber })
                 .toArray((err, document) => {
@@ -50,7 +53,7 @@ client.connect(err => {
                         }
                     }
 
-                    res.send(document)
+                    // res.send(document)
                 })
         }
         else {
@@ -94,7 +97,7 @@ client.connect(err => {
     //         })
     // });
 
-    cron.schedule('34 8 * * *', () => {
+    cron.schedule('15 9 * * *', () => {
         studentIdentify.find({})
             .toArray((err, documents) => {
                 console.log(documents)
