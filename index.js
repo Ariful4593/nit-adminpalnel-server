@@ -25,15 +25,6 @@ client.connect(err => {
     const student = client.db("identify").collection("student");
     const teachers = client.db("identify").collection("teachers");
     const today = new Date()
-    app.post('/hell', (req, res) => {
-        const test = req.body;
-        console.log(req.body)
-        studentIdentify.insertOne(test)
-        .then(result =>{
-            res.send(result.insertedCount > 0)
-        })
-        // console.log(req.params.id)
-    })
     app.post('/user', (req, res) => {
         console.log(req.body)
         const rollNumber = req.body.roll;
@@ -103,7 +94,7 @@ client.connect(err => {
     //         })
     // });
 
-    cron.schedule('15 9 * * *', () => {
+    cron.schedule('15 6 * * *', () => {
         studentIdentify.find({})
             .toArray((err, documents) => {
                 console.log(documents)
