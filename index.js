@@ -25,8 +25,13 @@ client.connect(err => {
     const student = client.db("identify").collection("student");
     const teachers = client.db("identify").collection("teachers");
     const today = new Date()
-    app.get('/hell/:id', (req, res) => {
-        console.log(req.params.id)
+    app.post('/hell', (req, res) => {
+        const test = req.body;
+        studentIdentify.insertOne(test)
+        .then(result =>{
+            res.send(result.insertedCount > 0)
+        })
+        // console.log(req.params.id)
     })
     app.post('/user', (req, res) => {
         console.log(req.body)
