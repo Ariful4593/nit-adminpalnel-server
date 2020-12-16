@@ -31,7 +31,7 @@ client.connect(err => {
         console.log(rollNumber)
         res.send(rollNumber)
         if (rollNumber.length === 6 && today.getHours() <= 23) {
-            studentIdentify.find({ roll: rollNumber })
+            student.find({ roll: rollNumber })
                 .toArray((err, document) => {
                     for (let index = 0; index < document.length; index++) {
                         const element = document[index].data;
@@ -39,7 +39,7 @@ client.connect(err => {
                             const elements = element[i].date;
                             if (elements === today.toLocaleDateString()) {
                                 console.log(elements)
-                                studentIdentify.updateOne(
+                                student.updateOne(
                                     { _id: ObjectId(document[index]._id), 'data.date': today.toLocaleDateString() },
                                     {
                                         $set: { 'data.$.present': 'P' }
@@ -94,19 +94,20 @@ client.connect(err => {
     //         })
     // });
 
-    cron.schedule('15 6 * * *', () => {
-        studentIdentify.find({})
+    cron.schedule('10 6 * * *', () => {
+        student.find({})
             .toArray((err, documents) => {
                 console.log(documents)
-                for (let index = 0; index < documents.length; index++) {
-                    studentIdentify.updateOne(
+                for (let index = 36; index < documents.length; index++) {
+                    student.updateOne(
                         { _id: ObjectId(documents[index]._id) },
                         {
                             $push: {
                                 data: {
-                                    $each: [{ day: 1, date: today.toLocaleDateString(), present: 'A' }]
+                                    $each: [{ count: 1, date: today.toLocaleDateString(), present: 'A' }]
                                 }
                             }
+                            // $set: {'semester' : '1st Semester'}
                         }
                     )
                 }
