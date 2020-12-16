@@ -39,7 +39,7 @@ client.connect(err => {
         res.send(rollNumber)
         
     })
-    app.post('/user', (req, res) => {
+    app.get('/user', (req, res) => {
         console.log('Hello WORLD')
         const rollNumber = req.body.roll;
         console.log(rollNumber)
@@ -52,21 +52,18 @@ client.connect(err => {
                             const elements = element[i].date;
                             if (elements === today.toLocaleDateString()) {
                                 console.log(elements)
-                                res.send(
-                                    studentIdentify.updateOne(
-                                        { _id: ObjectId(document[index]._id), 'data.date': today.toLocaleDateString() },
-                                        {
-                                            $set: { 'data.$.present': 'P' }
-                                        }
-                                    )
+                                studentIdentify.updateOne(
+                                    { _id: ObjectId(document[index]._id), 'data.date': today.toLocaleDateString() },
+                                    {
+                                        $set: { 'data.$.present': 'P' }
+                                    }
                                 )
-                                
                             }
 
                         }
                     }
 
-                    
+                    res.send(document)
                 })
         }
         else {
