@@ -3,6 +3,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { ObjectId } = require('mongodb');
 const fileUpload = require('express-fileupload');
+const http = require('http');
+const request = require('request');
+const axios = require('axios');
+const cheerio = require('cheerio');
+
 var cron = require('node-cron');
 
 
@@ -13,13 +18,11 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(fileUpload());
 
-
-
 const MongoClient = require('mongodb').MongoClient;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xsirj.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
-    
+
     const adminCollection = client.db("identify").collection("adminPost");
     const studentIdentify = client.db("identify").collection("studentIdentify");
     const student = client.db("identify").collection("student");
@@ -49,16 +52,14 @@ client.connect(err => {
 
                         }
                     }
-
-                    // res.send(document)
                 })
         }
         else {
             res.send("Sorry! you entered a wrong Roll number. Please try again later...")
         }
     })
+
     // cron.schedule('* * * * *', () => {
-    //     console.log('Hello Arif')
     //     studentIdentify.find({})
     //         .toArray((err, documents) => {
     //             for (let index = 0; index < documents.length; index++) {
@@ -94,11 +95,39 @@ client.connect(err => {
     //         })
     // });
 
+    // const getPostValue = async () => {
+    //     try {
+    //         const { data } = await axios.get('https://en.wikipedia.org/wiki/List_of_Bengali-language_authors_(chronological)');
+    //         const $ = cheerio.load(data);
+    //         const postTitles = [];
+    //         // $('a > img').each((_idx, el) =>{
+    //         //     const postTitle = $(el).attr('src');
+    //         //     // const postTitle = $(el).text();
+    //         //     postTitles.push(postTitle);
+    //         // })
+
+    //         $('ul > li > a').each((_idx, el) => {
+
+    //             if ($(el).text() !== '' && $(el).text().length > 8 && $(el).text().length < 16) {
+    //                 const postTitle = $(el).text();
+    //                 postTitles.push(postTitle);
+    //             }
+    //             // const postTitle = $(el).text();
+    //             // postTitles.push(postTitle);
+    //         })
+    //         return postTitles;
+    //     }
+    //     catch (err) {
+    //         throw err
+    //     }
+    // }
+    // getPostValue().then(data => console.log(data))
+
+    
     cron.schedule('10 6 * * *', () => {
         student.find({})
             .toArray((err, documents) => {
-                console.log(documents)
-                for (let index = 36; index < documents.length; index++) {
+                for (let index = 0; index < documents.length; index++) {
                     student.updateOne(
                         { _id: ObjectId(documents[index]._id) },
                         {
@@ -107,13 +136,13 @@ client.connect(err => {
                                     $each: [{ count: 1, date: today.toLocaleDateString(), present: 'A' }]
                                 }
                             }
-                            // $set: {'semester' : '1st Semester'}
+                            // $set: {'semester' : '8th Semester'}
                         }
                     )
                 }
             })
     });
-    
+
     app.get('/getUser', (req, res) => {
         studentIdentify.find({})
             .toArray((err, document) => {
@@ -126,10 +155,8 @@ client.connect(err => {
         const postForm = req.body;
         adminCollection.insertOne(postForm)
             .then(result => {
-                // res.send(result.insertedCount > 0)
                 res.redirect('/')
             })
-        // console.log(postForm)
     })
 
     app.get('/getPost', (req, res) => {
@@ -152,7 +179,6 @@ client.connect(err => {
             })
     })
     app.patch('/editPost', (req, res) => {
-        // console.log(req.params.id)
         console.log(req.body)
         adminCollection.updateOne(
             { _id: ObjectId(req.body.id) },
