@@ -94,7 +94,6 @@ client.connect(err => {
     //             }
     //         })
     // });
-
     // const getPostValue = async () => {
     //     try {
     //         const { data } = await axios.get('https://en.wikipedia.org/wiki/List_of_Bengali-language_authors_(chronological)');
@@ -123,11 +122,13 @@ client.connect(err => {
     // }
     // getPostValue().then(data => console.log(data))
 
+
     
     cron.schedule('10 6 * * *', () => {
         student.find({})
             .toArray((err, documents) => {
-                for (let index = 0; index < documents.length; index++) {
+                for (let index = 391; index < 400; index++) {
+                    console.log(index)
                     student.updateOne(
                         { _id: ObjectId(documents[index]._id) },
                         {
@@ -138,6 +139,7 @@ client.connect(err => {
                             }
                             // $set: {'semester' : '8th Semester'}
                         }
+                        
                     )
                 }
             })
