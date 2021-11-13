@@ -156,9 +156,7 @@ client.connect(err => {
     app.post('/adminPost', (req, res) => {
         const postForm = req.body;
         adminCollection.insertOne(postForm)
-            .then(result => {
-                res.redirect('/')
-            })
+            .then(result => res.send(result.insertedCount > 0))
     })
 
     app.get('/getPost', (req, res) => {
@@ -174,20 +172,19 @@ client.connect(err => {
             })
     })
     app.delete('/deletePost/:id', (req, res) => {
-        console.log(req.params.id)
         adminCollection.deleteOne({ _id: ObjectId(req.params.id) })
             .then((result) => {
                 res.send(result.deletedCount > 0)
             })
     })
     app.patch('/editPost', (req, res) => {
-        console.log(req.body)
         adminCollection.updateOne(
             { _id: ObjectId(req.body.id) },
             {
                 $set: { 'description': req.body.description }
             }
-        )
+        ).then(result => res.send(result.modifiedCount > 0))
+
     })
 
     app.post('/studentRegister', (req, res) => {
